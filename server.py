@@ -89,7 +89,7 @@ def index():
 	request.form:     if the browser submitted a form, this contains the data in the form
 	request.args:     dictionary of URL arguments, e.g., {a:1, b:2} for http://localhost?a=1&b=2
 	See its API: https://flask.palletsprojects.com/en/1.1.x/api/#incoming-request-data
-	"""
+	
 
 	# DEBUG: this is debugging code to see what request looks like
 	print(request.args)
@@ -106,7 +106,7 @@ def index():
 	names = []
 	for result in cursor:
 		names.append(result[0])
-	#print("names:", names)
+	print("names:", names)
 	cursor.close()
 
 	#
@@ -136,13 +136,14 @@ def index():
 	#     {% endfor %}
 	#
 	context = dict(data = names)
-
+	"""
 
 	#
 	# render_template looks in the templates/ folder for files.
 	# for example, the below file reads template/index.html
 	#
-	return render_template("index.html", **context)
+	return render_template("index.html")
+	#return render_template("index.html", **context)
 
 #
 # This is an example of a different path.  You can see it at:
@@ -157,20 +158,72 @@ def another():
 	return render_template("another.html")
 
 
-@app.route('/process', methods=['POST'])
-def process():
-	language = request.form.get('language')
-	cursor = g.conn.execute("SELECT island_name FROM island WHERE language = "+ "'" + language + "'")
+@app.route('/island_info', methods=['POST'])
+def island_info():
+	island_name = request.form.get('isl_info')
+	cursor = g.conn.execute("SELECT * FROM island WHERE island_name = "+ "'" + island_name + "'")
 
-	inames = []
+	iinfo = []
 	for result in cursor:
-		inames.append(result[0])
-	#print("names:", names)
+		iinfo.append(result)
 	cursor.close()
-	context = dict(idata = inames)
-	return render_template("index.html", **context)
+	return render_template("index.html", iinfo= iinfo)
 
 
+@app.route('/filter_islands')
+def filter_islands():
+	query_column = ['country', 'ocean', 'language', 'attraction_type', 'area', 'population']
+	fil_dict = {}
+	for i in query_column:
+		if request.args.get(i, ''):
+			fil_dict[i] = request.args.get(i, '')
+		
+	query_str = "SELECT DISTINCT island.* FROM island, tourism_attraction WHERE island.island_id = tourism_attraction.island_id AND "
+	for k, v in fil_dict.items():
+		if k in ['area','population']: #include a range
+			if v[-1] == '+':
+				lb = v[1:-1]
+				query_str = query_str + k + ">=" + lb + " AND "
+			else:
+				dash_index = v.index('-')
+				lb = v[1:dash_index]
+				ub = v[dash_index+1:]
+				query_str = query_str + k + ">=" + lb + " AND " + k + "<" + ub + " AND "
+		else: #not include a range
+			query_str = query_str + k + "=" + "'"+v+"'" + " AND "
+	query_str = query_str[:-5]
+	
+	cursor = g.conn.execute(query_str)
+	
+	fnames = []
+	for result in cursor:
+		#fnames.append(result[0])
+		fnames.append(result)
+	cursor.close()
+	#context = dict(fdata = fnames)
+	return render_template("index.html", fdata = fnames, q_str = query_str)
+	#return render_template("index.html", q_str = query_str)
+	
+	
+		
+"""tourism.html"""
+@app.route('/tourism/<island>')
+def tourism(island):
+	query_str = "SELECT tourism_attraction.* FROM tourism_attraction, island WHERE island.island_id = tourism_attraction.island_id AND island_name =" + "'"+island+"'"
+	cursor = g.conn.execute(query_str)
+
+	tourism_info = []
+	for result in cursor:
+		tourism_info.append(result)
+	cursor.close()
+
+	# Render the 'tourism.html' template with the results and the island name
+	return render_template('tourism.html', tourism_info= tourism_info, island = island)
+
+
+
+
+	
 
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])

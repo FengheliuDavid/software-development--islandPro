@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+  {% if tourism_info %}
+  <p class='title_text'>Here are the tourism attractions for {{ island }} Island:</p>
+  {% for t in tourism_info %}
+    {{ t }}
+  {% endfor %}
+{% else %}
+  <p>Sorry, we do not have any tourism attractions for {{ island }} Island.</p >
+{% endif %}
+
+
+
+  </body>
+</html>

@@ -6,24 +6,136 @@
     }
   </style>
 
+  <head>
+
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+
 
 <body>
-
-
 <p><a href="another">Go to the other page</a></p>
 
-<form method="POST" action="/add">
+<!-- <form method="POST" action="/add">
 <p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
+</form> -->
+
+<form action="{{ url_for('filter_islands') }}" method="GET">
+  <label for="country">Country:</label>
+  <select name="country" id="country">
+    <option value="">Any</option>
+    <option value="Spain">Spain</option>
+    <option value="Mauritius">Mauritius</option>
+    <option value="Indonesia">Indonesia</option>
+    <option value="South Korea">South Korea</option>
+    <option value="United States">United States</option>
+  </select>
+
+  <label for="ocean">Ocean:</label>
+  <select name="ocean" id="ocean">
+    <option value="">Any</option>
+    <option value="Atlantic Ocean">Atlantic Ocean</option>
+    <option value="East China Sea">East China Sea</option>
+    <option value="Indian Ocean">Indian Ocean</option>
+    <option value="Pacific Ocean">Pacific Ocean</option>
+  </select>
+
+  <label for="language">Language:</label>
+  <select name="language" id="language">
+    <option value="">Any</option>
+    <option value="Spanish">Spanish</option>
+    <option value="English">English</option>
+    <option value="Korean">Korean</option>
+    <option value="Indonesian">Indonesian</option>
+  </select>
+
+  <label for="attraction_type">Tourism attraction:</label>
+  <select name="attraction_type" id="attraction_type">
+    <option value="">Any</option>
+    <option value="Beach">Beach</option>
+    <option value="National Park">National Park</option>
+    <option value="Nature Reserve">Nature Reserve</option>
+    <option value="Religious Site">Religious Site</option>
+    <option value="Market">Market</option>
+    <option value="Mountain">Mountain</option>
+    <option value="Cultural Site">Cultural Site</option>
+    <option value="Cave">Cave</option>
+    <option value="Zoo">Zoo</option>
+    <option value="Water Park">Water Park</option>
+  </select>
+
+  <label for="area">Area (km2):</label>
+  <select name="area" id="area">
+    <option value="">Any</option>
+    <option value="a0-500">0-500</option>
+    <option value="a500-2000">500-2,000</option>
+    <option value="a2000-10000">2,000-10,000</option>
+    <option value="a10000+">10,000+</option>
+  </select>
+
+  <label for="population">Population:</label>
+  <select name="population" id="population">
+    <option value="">Any</option>
+    <option value="p0-5000">0-5,000</option>
+    <option value="p5000-20000">5,000-20,000</option>
+    <option value="p20000-100000">20,000-100,000</option>
+    <option value="p100000+">100,000+</option>
+  </select>
+
+  <input type="submit" value="Filter">
 </form>
 
-<form method="POST" action="/process">
-		<label for="language">Language:</label>
-		<input type="text" name="language" id="language">
+
+{% if fdata %}
+<p class='title_text'> Here are the results:</p>
+{% for n in fdata %}
+  <div class="island-info">
+  <img src="/image/ISL001.jpg" alt="Island Image" class="island-image">
+  <ul class="island-details">
+  <li><strong>Island Name:</strong> {{n[1] + " Island"}}</li>
+  <li><strong>Country:</strong> {{n[2]}}</li>
+  <li><strong>Ocean:</strong> {{n[3]}}</li>
+  <li><strong>Area:</strong> {{n[4]}}</li>
+  <li><strong>Population:</strong> {{n[5]}}</li>
+  <li><strong>Language:</strong> {{n[6]}}</li>
+  </ul>
+  </div>
+{% endfor %}
+{% else %}
+  <p>Sorry, we do not have a destination that satisfy your need.</p >
+{% endif %}
+
+<!-- <p>{{ fdata }}</p> -->
+<!-- <p>{{ q_str }}</p> -->
+
+<form method="POST" action="/island_info">
+		<label for="isl_info">Island Name:</label>
+		<input type="text" name="isl_info" id="isl_info">
 		<input type="submit" value="Submit">
 </form>
 
-<div>{{idata}}</div>
+{% if iinfo %}
+<p class='title_text'> Here are the results:</p>
+{% for n in iinfo %}
+  <div class="island-info">
+  <img src="/image/ISL001.jpg" alt="Island Image" class="island-image">
+  <ul class="island-details">
+  <li><strong>Island Name:</strong> {{n[1] + " Island"}}</li>
+  <li><strong>Country:</strong> {{n[2]}}</li>
+  <li><strong>Ocean:</strong> {{n[3]}}</li>
+  <li><strong>Area:</strong> {{n[4]}}</li>
+  <li><strong>Population:</strong> {{n[5]}}</li>
+  <li><strong>Language:</strong> {{n[6]}}</li>
+  <li><a href="{{ url_for('tourism', island=n[1]) }}" target="_blank">tourism attraction</a></li>
+  </ul>
+  </div>
+{% endfor %}
+{% else %}
+  <p>Sorry, we do not have a destination that satisfy your need.</p >
+{% endif %}
 
+
+<!-- <div>{{idata}}</div> -->
+<!-- <p>{{ fdata }}</p>
 
 <h1>Some famous Computer Scientists</h1>
 <div>{{data}}</div>
@@ -32,7 +144,7 @@
   {% for n in data %}
   <div>{{n}}</div>
   {% endfor %}
-</div>
+</div> -->
 
 </body>
 

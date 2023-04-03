@@ -1,0 +1,23 @@
+.title_text {
+  background-color: red;
+}
+
+.island-info {
+  display: flex;
+  align-items: center;
+}
+
+.island-image {
+  width: 50%;
+  margin-right: 20px;
+}
+
+.island-details {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.island-details li {
+  margin-bottom: 10px;
+}
