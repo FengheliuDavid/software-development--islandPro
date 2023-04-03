@@ -1,20 +1,55 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-  </head>
-  <body>
+
+<style>
+  body {
+    font-size: 15pt;
+    font-family: arial;
+  }
+</style>
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+
+<body>
+  <h1 class='title_text'>Here are the tourism attractions for {{ island }} Island:</h1>
   {% if tourism_info %}
-  <p class='title_text'>Here are the tourism attractions for {{ island }} Island:</p>
-  {% for t in tourism_info %}
-    {{ t }}
+  {% for n in tourism_info %}
+    <div class="tourism_info">
+    <ul class="tourism_info">
+    <li><strong>Tourism Attraction Name:</strong> {{n[1]}}</li>
+    <li><strong>Ticket Price:</strong> {{n[2]}}</li>
+    <li><strong>Type:</strong> {{n[3]}}</li>
+    </ul>
+    <form action="/tourism-add-to-budget" method="POST">
+      <input type="hidden" name="tourism_name" value="{{n[0]}}">
+      <input type="hidden" name="price_level" value="{{n[2]}}">
+      <button type="submit">Add to budget</button>
+    </form>
+    </div>
   {% endfor %}
-{% else %}
-  <p>Sorry, we do not have any tourism attractions for {{ island }} Island.</p >
-{% endif %}
+  {% else %}
+    <p>Sorry, we do not have a tourism attraction that satisfy your need.</p >
+  {% endif %}
+
+  <h1 class='title_text'>Here are the tours for {{ island }} Island:</h1>
+  {% if tour_info %}
+  {% for n in tour_info %}
+    <div class="tour_info">
+    <ul class="tour_info">
+    <li><strong>Tour Name:</strong> {{n[1]}}</li>
+    <li><strong>Vendor:</strong> {{n[2]}}</li>
+    </ul>
+    </div>
+  {% endfor %}
+  {% else %}
+    <p>Sorry, we do not have an airport that satisfy your need.</p >
+  {% endif %}
 
 
 
-  </body>
+</body>
+
 </html>

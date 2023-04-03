@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<style>
+  body {
+    font-size: 15pt;
+    font-family: arial;
+  }
+</style>
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+
+<body>
+  <h1 class='title_text'>Here are the restaurants for {{ island }} Island:</h1>
+
+  {% if resta_info %}
+  {% for n in resta_info %}
+    <div class="resta_info">
+    <ul class="resta_info">
+    <li><strong>Restaurant Name:</strong> {{n[1]}}</li>
+    <li><strong>Location:</strong> {{n[2]}}</li>
+    <li><strong>Rating:</strong> {{n[3]}}</li>
+    <li><strong>Description:</strong> {{n[4]}}</li>
+    </ul>
+    <form action="/resta-add-to-budget" method="POST">
+      <input type="hidden" name="resta_name" value="{{n[0]}}">
+      <input type="hidden" name="price_level" value="{{n[3]}}">
+      <button type="submit">Add to budget</button>
+    </form>
+    </div>
+  {% endfor %}
+  {% else %}
+    <p>Sorry, we do not have a restaurant that satisfy your need.</p >
+  {% endif %}
+
+</body>
+
+</html>

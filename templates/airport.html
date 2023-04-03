@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<style>
+  body {
+    font-size: 15pt;
+    font-family: arial;
+  }
+</style>
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+
+<body>
+
+  <h1 class='title_text'>Here are the airport for {{ island }} Island:</h1>
+
+  {% if airport_info %}
+  {% for n in airport_info %}
+    <div class="airport_info">
+    <ul class="airport_info">
+    <li><strong>Airport Name:</strong> {{n[1]}}</li>
+    <li><strong>Type:</strong> {{n[2]}}</li>
+    <li><strong>Location:</strong> {{n[3]}}</li>
+    <li><strong>Flight Destination:</strong> {{n[4]}}</li>
+    </ul>
+    </div>
+  {% endfor %}
+  {% else %}
+    <p>Sorry, we do not have an airport that satisfy your need.</p >
+  {% endif %}
+
+
+
+</body>
+
+</html>

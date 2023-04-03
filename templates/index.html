@@ -4,16 +4,19 @@
       font-size: 15pt;
       font-family: arial;
     }
+
+    .comment {
+      font-size: 10pt;
+    }
+    .plan {
+      background-color: red;
+    }
   </style>
 
-  <head>
-
-    <link rel="stylesheet" href="/css/styles.css">
-  </head>
 
 
 <body>
-<p><a href="another">Go to the other page</a></p>
+<p class="plan"><a href="budget">Show my budget</a></p>
 
 <!-- <form method="POST" action="/add">
 <p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
@@ -89,7 +92,6 @@
 <p class='title_text'> Here are the results:</p>
 {% for n in fdata %}
   <div class="island-info">
-  <img src="/image/ISL001.jpg" alt="Island Image" class="island-image">
   <ul class="island-details">
   <li><strong>Island Name:</strong> {{n[1] + " Island"}}</li>
   <li><strong>Country:</strong> {{n[2]}}</li>
@@ -97,6 +99,10 @@
   <li><strong>Area:</strong> {{n[4]}}</li>
   <li><strong>Population:</strong> {{n[5]}}</li>
   <li><strong>Language:</strong> {{n[6]}}</li>
+    <li><a href="{{ url_for('tourism', island=n[1]) }}" target="_blank">tourism attraction</a></li>
+  <li><a href="{{ url_for('resta', island=n[1]) }}" target="_blank">restaurant</a></li>
+  <li><a href="{{ url_for('hotel', island=n[1]) }}" target="_blank">hotel</a></li>
+  <li><a href="{{ url_for('airport', island=n[1]) }}" target="_blank">airport</a></li>
   </ul>
   </div>
 {% endfor %}
@@ -111,13 +117,13 @@
 		<label for="isl_info">Island Name:</label>
 		<input type="text" name="isl_info" id="isl_info">
 		<input type="submit" value="Submit">
+    <p class = "comment">note: due to the limitation of database, you can only choose from "Tenerife","Jeju Island","Hawaii","Mauritius","Bali"</p>
 </form>
 
 {% if iinfo %}
 <p class='title_text'> Here are the results:</p>
 {% for n in iinfo %}
   <div class="island-info">
-  <img src="/image/ISL001.jpg" alt="Island Image" class="island-image">
   <ul class="island-details">
   <li><strong>Island Name:</strong> {{n[1] + " Island"}}</li>
   <li><strong>Country:</strong> {{n[2]}}</li>
@@ -126,6 +132,10 @@
   <li><strong>Population:</strong> {{n[5]}}</li>
   <li><strong>Language:</strong> {{n[6]}}</li>
   <li><a href="{{ url_for('tourism', island=n[1]) }}" target="_blank">tourism attraction</a></li>
+  <li><a href="{{ url_for('resta', island=n[1]) }}" target="_blank">restaurant</a></li>
+  <li><a href="{{ url_for('hotel', island=n[1]) }}" target="_blank">hotel</a></li>
+  <li><a href="{{ url_for('airport', island=n[1]) }}" target="_blank">airport</a></li>
+
   </ul>
   </div>
 {% endfor %}

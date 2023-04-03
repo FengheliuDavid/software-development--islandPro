@@ -153,9 +153,9 @@ def index():
 # Notice that the function name is another() rather than index()
 # The functions for each app.route need to have different names
 #
-@app.route('/another')
+@app.route('/budget')
 def another():
-	return render_template("another.html")
+	return render_template("budget.html")
 
 
 @app.route('/island_info', methods=['POST'])
@@ -209,20 +209,102 @@ def filter_islands():
 """tourism.html"""
 @app.route('/tourism/<island>')
 def tourism(island):
+	#tourism
 	query_str = "SELECT tourism_attraction.* FROM tourism_attraction, island WHERE island.island_id = tourism_attraction.island_id AND island_name =" + "'"+island+"'"
 	cursor = g.conn.execute(query_str)
-
 	tourism_info = []
 	for result in cursor:
 		tourism_info.append(result)
 	cursor.close()
+	#tour
+	query_str2 = "SELECT tour.* FROM tour, island WHERE island.island_id = tour.island_id AND island_name =" + "'"+island+"'"
+	cursor2 = g.conn.execute(query_str2)
+	tour_info = []
+	for result in cursor2:
+		tour_info.append(result)
+	cursor2.close()
+	return render_template('tourism.html', tourism_info= tourism_info, tour_info= tour_info, island = island)
 
-	# Render the 'tourism.html' template with the results and the island name
-	return render_template('tourism.html', tourism_info= tourism_info, island = island)
+"""resta.html"""
+@app.route('/resta/<island>')
+def resta(island):
+	query_str = "SELECT restaurant.* FROM restaurant, island WHERE island.island_id = restaurant.island_id AND island_name =" + "'"+island+"'"
+	cursor = g.conn.execute(query_str)
 
+	resta_info = []
+	for result in cursor:
+		resta_info.append(result)
+	cursor.close()
 
+	return render_template('resta.html', resta_info= resta_info, island = island)
 
+"""hotel.html"""
+@app.route('/hotel/<island>')
+def hotel(island):
+	query_str = "SELECT hotel.* FROM hotel, island WHERE island.island_id = hotel.island_id AND island_name =" + "'"+island+"'"
+	cursor = g.conn.execute(query_str)
 
+	hotel_info = []
+	for result in cursor:
+		hotel_info.append(result)
+	cursor.close()
+	
+	return render_template('hotel.html', hotel_info= hotel_info, island = island)
+	#return render_template('hotel.html', q = query_str)
+
+"""airport.html"""
+@app.route('/airport/<island>')
+def airport(island):
+	query_str = "SELECT airport.* FROM airport, island WHERE island.island_id = airport.island_id AND island_name =" + "'"+island+"'"
+	cursor = g.conn.execute(query_str)
+	
+	airport_info = []
+	for result in cursor:
+		airport_info.append(result)
+	cursor.close()
+
+	return render_template('airport.html', airport_info= airport_info, island = island)
+
+"""budget"""
+@app.route('/hotel-add-to-budget', methods=['POST'])
+def hotel_add_to_budget():
+	event_type = request.form['hotel_name']
+	event_type =  event_type[:3]
+	event_price = request.form['price_level']
+	event_price = float(event_price)*50
+	params = {}
+	params["event_type"] = event_type
+	params["event_price"] = event_price
+	with engine.begin() as connection:
+		connection.execute(text("INSERT INTO budget VALUES (:event_type, :event_price)"), params)
+	return '<html><body><h1>Added!</h1></body></html>'
+
+@app.route('/resta-add-to-budget', methods=['POST'])
+def resta_add_to_budget():
+	event_type = request.form['resta_name']
+	event_type =  event_type[:3]
+	event_price = request.form['price_level']
+	event_price = float(event_price)*10
+	params = {}
+	params["event_type"] = event_type
+	params["event_price"] = event_price
+	with engine.begin() as connection:
+		connection.execute(text("INSERT INTO budget VALUES (:event_type, :event_price)"), params)
+	return '<html><body><h1>Added!</h1></body></html>'
+	
+@app.route('/tourism-add-to-budget', methods=['POST'])
+def tourism_add_to_budget():
+	event_type = request.form['tourism_name']
+	event_type =  event_type[:3]
+	event_price = request.form['price_level']
+	event_price = event_price
+	params = {}
+	params["event_type"] = event_type
+	params["event_price"] = event_price
+	with engine.begin() as connection:
+		connection.execute(text("INSERT INTO budget VALUES (:event_type, :event_price)"), params)
+	return '<html><body><h1>Added!</h1></body></html>'
+	
 	
 
 # Example of adding new data to the database

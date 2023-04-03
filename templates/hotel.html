@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<style>
+  body {
+    font-size: 15pt;
+    font-family: arial;
+  }
+</style>
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+
+<body>
+  <h1 class='title_text'>Here are the hotels for {{ island }} Island:</h1>
+
+  {% if hotel_info %}
+  {% for n in hotel_info %}
+  <div class="hotel_info">
+    <ul class="hotel_info">
+      <li><strong>Hotel Name:</strong> {{n[1]}}</li>
+      <li><strong>Room type:</strong> {{n[2]}}</li>
+      <li><strong>Rating:</strong> {{n[3]}}</li>
+      <li><strong>Price level:</strong> {{n[4]}}</li>
+    </ul>
+    <form action="/hotel-add-to-budget" method="POST">
+      <input type="hidden" name="hotel_name" value="{{n[0]}}">
+      <input type="hidden" name="price_level" value="{{n[4]}}">
+      <button type="submit">Add to budget</button>
+    </form>
+  </div>
+  {% endfor %}
+  {% else %}
+  <p>Sorry, we do not have a hotel that satisfy your need.</p>
+  {% endif %}
+
+
+</body>
+
+</html>
