@@ -53,7 +53,7 @@ def index():
 @app.route('/island_info', methods=['POST'])
 def island_info():
 	island_name = request.form.get('isl_info')
-	cursor = g.conn.execute("SELECT * FROM island WHERE island_name = "+ "'" + island_name + "'")
+	cursor = g.conn.execute(text("SELECT * FROM island WHERE island_name = "+ "'" + island_name + "'"))
 
 	iinfo = []
 	for result in cursor:
@@ -85,7 +85,7 @@ def filter_islands():
 			query_str = query_str + k + "=" + "'"+v+"'" + " AND "
 	query_str = query_str[:-5]
 	
-	cursor = g.conn.execute(query_str)
+	cursor = g.conn.execute(text(query_str))
 	
 	fnames = []
 	for result in cursor:
@@ -101,14 +101,14 @@ def filter_islands():
 def tourism(island):
 	#tourism
 	query_str = "SELECT tourism_attraction.* FROM tourism_attraction, island WHERE island.island_id = tourism_attraction.island_id AND island_name =" + "'"+island+"'"
-	cursor = g.conn.execute(query_str)
+	cursor = g.conn.execute(text(query_str))
 	tourism_info = []
 	for result in cursor:
 		tourism_info.append(result)
 	cursor.close()
 	#tour
 	query_str2 = "SELECT tour.* FROM tour, island WHERE island.island_id = tour.island_id AND island_name =" + "'"+island+"'"
-	cursor2 = g.conn.execute(query_str2)
+	cursor2 = g.conn.execute(text(query_str2))
 	tour_info = []
 	for result in cursor2:
 		tour_info.append(result)
@@ -119,7 +119,7 @@ def tourism(island):
 @app.route('/resta/<island>')
 def resta(island):
 	query_str = "SELECT restaurant.* FROM restaurant, island WHERE island.island_id = restaurant.island_id AND island_name =" + "'"+island+"'"
-	cursor = g.conn.execute(query_str)
+	cursor = g.conn.execute(text(query_str))
 
 	resta_info = []
 	for result in cursor:
@@ -132,7 +132,7 @@ def resta(island):
 @app.route('/hotel/<island>')
 def hotel(island):
 	query_str = "SELECT hotel.* FROM hotel, island WHERE island.island_id = hotel.island_id AND island_name =" + "'"+island+"'"
-	cursor = g.conn.execute(query_str)
+	cursor = g.conn.execute(text(query_str))
 
 	hotel_info = []
 	for result in cursor:
@@ -146,7 +146,7 @@ def hotel(island):
 @app.route('/airport/<island>')
 def airport(island):
 	query_str = "SELECT airport.* FROM airport, island WHERE island.island_id = airport.island_id AND island_name =" + "'"+island+"'"
-	cursor = g.conn.execute(query_str)
+	cursor = g.conn.execute(text(query_str))
 	
 	airport_info = []
 	for result in cursor:
@@ -204,12 +204,12 @@ def budget():
 """
 @app.route('/delete_budget', methods=['POST'])
 def delete_budget():
-    g.conn.execute("DELETE FROM budget")
+    g.conn.execute(text("DELETE FROM budget"))
     return redirect('/budget')
 
 @app.route('/budget')
 def budget():
-    cursor = g.conn.execute("SELECT event_type, SUM(price) FROM budget GROUP BY event_type")
+    cursor = g.conn.execute(text("SELECT event_type, SUM(price) FROM budget GROUP BY event_type"))
     rows = cursor.fetchall()
     cursor.close()
     event_types = []
