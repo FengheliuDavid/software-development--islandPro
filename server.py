@@ -205,7 +205,7 @@ def budget():
 @app.route('/delete_budget', methods=['POST'])
 def delete_budget():
     with engine.begin() as connection:
-	connection.execute(text("DELETE FROM budget"))
+        connection.execute(text("DELETE FROM budget"))
     return redirect('/budget')
 
 @app.route('/budget')
