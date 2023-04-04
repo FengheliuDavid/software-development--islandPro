@@ -1,160 +1,169 @@
 <html>
-  <style>
-    body{
-      font-size: 15pt;
-      font-family: arial;
-    }
+<style>
+  body {
+    font-size: 15pt;
+    font-family: arial;
+  }
 
-    .comment {
-      font-size: 10pt;
-    }
-    .plan {
-      background-color: red;
-    }
-  </style>
+  .comment {
+    font-size: 10pt;
+    color: red;
+  }
+
+  .plan {
+    color: blue;
+  }
+
+.heading {
+  background-color: #80bfff;
+}
+
+.result-page {
+  background-color:#F0F8FF;
+}
+
+</style>
 
 
 
 <body>
-<p class="plan"><a href="budget">Show my budget</a></p>
-
-<!-- <form method="POST" action="/add">
-<p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
-</form> -->
-
-<form action="{{ url_for('filter_islands') }}" method="GET">
-  <label for="country">Country:</label>
-  <select name="country" id="country">
-    <option value="">Any</option>
-    <option value="Spain">Spain</option>
-    <option value="Mauritius">Mauritius</option>
-    <option value="Indonesia">Indonesia</option>
-    <option value="South Korea">South Korea</option>
-    <option value="United States">United States</option>
-  </select>
-
-  <label for="ocean">Ocean:</label>
-  <select name="ocean" id="ocean">
-    <option value="">Any</option>
-    <option value="Atlantic Ocean">Atlantic Ocean</option>
-    <option value="East China Sea">East China Sea</option>
-    <option value="Indian Ocean">Indian Ocean</option>
-    <option value="Pacific Ocean">Pacific Ocean</option>
-  </select>
-
-  <label for="language">Language:</label>
-  <select name="language" id="language">
-    <option value="">Any</option>
-    <option value="Spanish">Spanish</option>
-    <option value="English">English</option>
-    <option value="Korean">Korean</option>
-    <option value="Indonesian">Indonesian</option>
-  </select>
-
-  <label for="attraction_type">Tourism attraction:</label>
-  <select name="attraction_type" id="attraction_type">
-    <option value="">Any</option>
-    <option value="Beach">Beach</option>
-    <option value="National Park">National Park</option>
-    <option value="Nature Reserve">Nature Reserve</option>
-    <option value="Religious Site">Religious Site</option>
-    <option value="Market">Market</option>
-    <option value="Mountain">Mountain</option>
-    <option value="Cultural Site">Cultural Site</option>
-    <option value="Cave">Cave</option>
-    <option value="Zoo">Zoo</option>
-    <option value="Water Park">Water Park</option>
-  </select>
-
-  <label for="area">Area (km2):</label>
-  <select name="area" id="area">
-    <option value="">Any</option>
-    <option value="a0-500">0-500</option>
-    <option value="a500-2000">500-2,000</option>
-    <option value="a2000-10000">2,000-10,000</option>
-    <option value="a10000+">10,000+</option>
-  </select>
-
-  <label for="population">Population:</label>
-  <select name="population" id="population">
-    <option value="">Any</option>
-    <option value="p0-5000">0-5,000</option>
-    <option value="p5000-20000">5,000-20,000</option>
-    <option value="p20000-100000">20,000-100,000</option>
-    <option value="p100000+">100,000+</option>
-  </select>
-
-  <input type="submit" value="Filter">
-</form>
+  <div class="heading">
 
 
-{% if fdata %}
-<p class='title_text'> Here are the results:</p>
-{% for n in fdata %}
-  <div class="island-info">
-  <ul class="island-details">
-  <li><strong>Island Name:</strong> {{n[1] + " Island"}}</li>
-  <li><strong>Country:</strong> {{n[2]}}</li>
-  <li><strong>Ocean:</strong> {{n[3]}}</li>
-  <li><strong>Area:</strong> {{n[4]}}</li>
-  <li><strong>Population:</strong> {{n[5]}}</li>
-  <li><strong>Language:</strong> {{n[6]}}</li>
-    <li><a href="{{ url_for('tourism', island=n[1]) }}" target="_blank">tourism attraction</a></li>
-  <li><a href="{{ url_for('resta', island=n[1]) }}" target="_blank">restaurant</a></li>
-  <li><a href="{{ url_for('hotel', island=n[1]) }}" target="_blank">hotel</a></li>
-  <li><a href="{{ url_for('airport', island=n[1]) }}" target="_blank">airport</a></li>
-  </ul>
+  <h1>Welcome, let's start planning your island trip! 🏖️🏝️</h1>
+  <p class="plan"><a href="budget">💰Show my budget</a></p>
+
+  <h3>Enter the island name, and discover trip info:</h3>
+  <form method="POST" action="/island_info">
+    <label for="isl_info">Island Name:</label>
+    <input type="text" name="isl_info" id="isl_info">
+    <input type="submit" value="Submit">
+    <p class="comment">note: due to the limitation of database, you can only choose from "Tenerife","Jeju Island","Hawaii","Mauritius","Bali"</p>
+  </form>
+  <hr>
+  <h3>Don't have an answer yet? try filter your destination:</h3>
+  <form action="{{ url_for('filter_islands') }}" method="GET">
+    <label for="country">Country:</label>
+    <select name="country" id="country">
+      <option value="">Any</option>
+      <option value="Spain">Spain</option>
+      <option value="Mauritius">Mauritius</option>
+      <option value="Indonesia">Indonesia</option>
+      <option value="South Korea">South Korea</option>
+      <option value="United States">United States</option>
+    </select>
+
+    <label for="ocean">Ocean:</label>
+    <select name="ocean" id="ocean">
+      <option value="">Any</option>
+      <option value="Atlantic Ocean">Atlantic Ocean</option>
+      <option value="East China Sea">East China Sea</option>
+      <option value="Indian Ocean">Indian Ocean</option>
+      <option value="Pacific Ocean">Pacific Ocean</option>
+    </select>
+
+    <label for="language">Language:</label>
+    <select name="language" id="language">
+      <option value="">Any</option>
+      <option value="Spanish">Spanish</option>
+      <option value="English">English</option>
+      <option value="Korean">Korean</option>
+      <option value="Indonesian">Indonesian</option>
+    </select>
+
+    <label for="attraction_type">Tourism attraction:</label>
+    <select name="attraction_type" id="attraction_type">
+      <option value="">Any</option>
+      <option value="Beach">Beach</option>
+      <option value="National Park">National Park</option>
+      <option value="Nature Reserve">Nature Reserve</option>
+      <option value="Religious Site">Religious Site</option>
+      <option value="Market">Market</option>
+      <option value="Mountain">Mountain</option>
+      <option value="Cultural Site">Cultural Site</option>
+      <option value="Cave">Cave</option>
+      <option value="Zoo">Zoo</option>
+      <option value="Water Park">Water Park</option>
+    </select>
+
+    <label for="area">Area (km2):</label>
+    <select name="area" id="area">
+      <option value="">Any</option>
+      <option value="a0-500">0-500</option>
+      <option value="a500-2000">500-2,000</option>
+      <option value="a2000-10000">2,000-10,000</option>
+      <option value="a10000+">10,000+</option>
+    </select>
+
+    <label for="population">Population:</label>
+    <select name="population" id="population">
+      <option value="">Any</option>
+      <option value="p0-5000">0-5,000</option>
+      <option value="p5000-20000">5,000-20,000</option>
+      <option value="p20000-100000">20,000-100,000</option>
+      <option value="p100000+">100,000+</option>
+    </select>
+
+    <input type="submit" value="Filter">
+  </form>
+
+  <hr class="big-hr">
   </div>
-{% endfor %}
-{% else %}
-  <p>Sorry, we do not have a destination that satisfy your need.</p >
-{% endif %}
 
-<!-- <p>{{ fdata }}</p> -->
-<!-- <p>{{ q_str }}</p> -->
+  <div class="result-page">
 
-<form method="POST" action="/island_info">
-		<label for="isl_info">Island Name:</label>
-		<input type="text" name="isl_info" id="isl_info">
-		<input type="submit" value="Submit">
-    <p class = "comment">note: due to the limitation of database, you can only choose from "Tenerife","Jeju Island","Hawaii","Mauritius","Bali"</p>
-</form>
-
-{% if iinfo %}
-<p class='title_text'> Here are the results:</p>
-{% for n in iinfo %}
+  {% if fdata %}
+  <h3 class='title_text'> Here are the results:</h3>
+  {% for n in fdata %}
   <div class="island-info">
-  <ul class="island-details">
-  <li><strong>Island Name:</strong> {{n[1] + " Island"}}</li>
-  <li><strong>Country:</strong> {{n[2]}}</li>
-  <li><strong>Ocean:</strong> {{n[3]}}</li>
-  <li><strong>Area:</strong> {{n[4]}}</li>
-  <li><strong>Population:</strong> {{n[5]}}</li>
-  <li><strong>Language:</strong> {{n[6]}}</li>
-  <li><a href="{{ url_for('tourism', island=n[1]) }}" target="_blank">tourism attraction</a></li>
-  <li><a href="{{ url_for('resta', island=n[1]) }}" target="_blank">restaurant</a></li>
-  <li><a href="{{ url_for('hotel', island=n[1]) }}" target="_blank">hotel</a></li>
-  <li><a href="{{ url_for('airport', island=n[1]) }}" target="_blank">airport</a></li>
-
-  </ul>
+    <ul class="island-details">
+      <li><strong>Island Name:</strong> {{n[1] + " Island"}}</li>
+      <li><strong>Country:</strong> {{n[2]}}</li>
+      <li><strong>Ocean:</strong> {{n[3]}}</li>
+      <li><strong>Area:</strong> {{n[4]}}</li>
+      <li><strong>Population:</strong> {{n[5]}}</li>
+      <li><strong>Language:</strong> {{n[6]}}</li>
+      <li><a href="{{ url_for('tourism', island=n[1]) }}" target="_blank">tourism attraction</a></li>
+      <li><a href="{{ url_for('resta', island=n[1]) }}" target="_blank">restaurant</a></li>
+      <li><a href="{{ url_for('hotel', island=n[1]) }}" target="_blank">hotel</a></li>
+      <li><a href="{{ url_for('airport', island=n[1]) }}" target="_blank">airport</a></li>
+    </ul>
+    <hr class="small-hr">
   </div>
-{% endfor %}
-{% else %}
-  <p>Sorry, we do not have a destination that satisfy your need.</p >
-{% endif %}
-
-
-<!-- <div>{{idata}}</div> -->
-<!-- <p>{{ fdata }}</p>
-
-<h1>Some famous Computer Scientists</h1>
-<div>{{data}}</div>
-
-<div>
-  {% for n in data %}
-  <div>{{n}}</div>
   {% endfor %}
-</div> -->
+  {% else %}
+  <p> </p>
+  {% endif %}
+
+  <!-- <p>{{ fdata }}</p> -->
+  <!-- <p>{{ q_str }}</p> -->
+
+
+
+  {% if iinfo %}
+  <p class='title_text'> Here are the results:</p>
+  {% for n in iinfo %}
+  <div class="island-info">
+    <ul class="island-details">
+      <li><strong>Island Name:</strong> {{n[1] + " Island"}}</li>
+      <li><strong>Country:</strong> {{n[2]}}</li>
+      <li><strong>Ocean:</strong> {{n[3]}}</li>
+      <li><strong>Area:</strong> {{n[4]}}</li>
+      <li><strong>Population:</strong> {{n[5]}}</li>
+      <li><strong>Language:</strong> {{n[6]}}</li>
+      <li><a href="{{ url_for('tourism', island=n[1]) }}" target="_blank">tourism attraction</a></li>
+      <li><a href="{{ url_for('resta', island=n[1]) }}" target="_blank">restaurant</a></li>
+      <li><a href="{{ url_for('hotel', island=n[1]) }}" target="_blank">hotel</a></li>
+      <li><a href="{{ url_for('airport', island=n[1]) }}" target="_blank">airport</a></li>
+    </ul>
+    <hr class="small-hr">
+  </div>
+  {% endfor %}
+  {% else %}
+  <p> </p>
+  {% endif %}
+
+  </div>
 
 </body>
 

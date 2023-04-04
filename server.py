@@ -13,6 +13,7 @@ import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response
+import json
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -24,31 +25,9 @@ DATABASEURI = f"postgresql://{DATABASE_USERNAME}:{DATABASE_PASSWRD}@{DATABASE_HO
 
 engine = create_engine(DATABASEURI)
 
-# Example of running queries in your database
-# Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
-#
-#with engine.connect() as conn:
-#	create_table_command = """
-#	CREATE TABLE IF NOT EXISTS test (
-#		id serial,
-#		name text
-#	)
-#	"""
-#	res = conn.execute(text(create_table_command))
-#	insert_table_command = """INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace')"""
-#	res = conn.execute(text(insert_table_command))
-#	# you need to commit for create, insert, update queries to reflect
-#	conn.commit()
-
 
 @app.before_request
 def before_request():
-	"""
-	This function is run at the beginning of every web request 
-	(every time you enter an address in the web browser).
-	We use it to setup a database connection that can be used throughout the request.
-	The variable g is globally accessible.
-	"""
 	try:
 		g.conn = engine.connect()
 	except:
@@ -58,106 +37,19 @@ def before_request():
 
 @app.teardown_request
 def teardown_request(exception):
-	"""
-	At the end of the web request, this makes sure to close the database connection.
-	If you don't, the database could run out of memory!
-	"""
 	try:
 		g.conn.close()
 	except Exception as e:
 		pass
 
 
-#
-# @app.route is a decorator around index() that means:
-#   run index() whenever the user tries to access the "/" path using a GET request
-#
-# If you wanted the user to go to, for example, localhost:8111/foobar/ with POST or GET then you could use:
-#
-#       @app.route("/foobar/", methods=["POST", "GET"])
-#
-# PROTIP: (the trailing / in the path is important)
-# 
 # see for routing: https://flask.palletsprojects.com/en/1.1.x/quickstart/#routing
 # see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
-#
 @app.route('/')
 def index():
-	"""
-	request is a special object that Flask provides to access web request information:
-	request.method:   "GET" or "POST"
-	request.form:     if the browser submitted a form, this contains the data in the form
-	request.args:     dictionary of URL arguments, e.g., {a:1, b:2} for http://localhost?a=1&b=2
-	See its API: https://flask.palletsprojects.com/en/1.1.x/api/#incoming-request-data
-	
-
-	# DEBUG: this is debugging code to see what request looks like
-	print(request.args)
-
-
-	#
-	# example of a database query
-	#
-	#lan=request.form["language"]
-	#print("lan")
-	want = 'Bali'
-	cursor = g.conn.execute("SELECT island_id FROM island WHERE island_name = "+ "'" + want + "'")
-
-	names = []
-	for result in cursor:
-		names.append(result[0])
-	print("names:", names)
-	cursor.close()
-
-	#
-	# Flask uses Jinja templates, which is an extension to HTML where you can
-	# pass data to a template and dynamically generate HTML based on the data
-	# (you can think of it as simple PHP)
-	# documentation: https://realpython.com/primer-on-jinja-templating/
-	#
-	# You can see an example template in templates/index.html
-	#
-	# context are the variables that are passed to the template.
-	# for example, "data" key in the context variable defined below will be 
-	# accessible as a variable in index.html:
-	#
-	#     # will print: [u'grace hopper', u'alan turing', u'ada lovelace']
-	#     <div>{{data}}</div>
-	#     
-	#     # creates a <div> tag for each element in data
-	#     # will print: 
-	#     #
-	#     #   <div>grace hopper</div>
-	#     #   <div>alan turing</div>
-	#     #   <div>ada lovelace</div>
-	#     #
-	#     {% for n in data %}
-	#     <div>{{n}}</div>
-	#     {% endfor %}
-	#
-	context = dict(data = names)
-	"""
-
-	#
-	# render_template looks in the templates/ folder for files.
-	# for example, the below file reads template/index.html
-	#
 	return render_template("index.html")
-	#return render_template("index.html", **context)
 
-#
-# This is an example of a different path.  You can see it at:
-# 
-#     localhost:8111/another
-#
-# Notice that the function name is another() rather than index()
-# The functions for each app.route need to have different names
-#
-@app.route('/budget')
-def another():
-	return render_template("budget.html")
-
-
+#given island name, return information
 @app.route('/island_info', methods=['POST'])
 def island_info():
 	island_name = request.form.get('isl_info')
@@ -169,7 +61,7 @@ def island_info():
 	cursor.close()
 	return render_template("index.html", iinfo= iinfo)
 
-
+#given filter input, return satisfied islands
 @app.route('/filter_islands')
 def filter_islands():
 	query_column = ['country', 'ocean', 'language', 'attraction_type', 'area', 'population']
@@ -197,15 +89,13 @@ def filter_islands():
 	
 	fnames = []
 	for result in cursor:
-		#fnames.append(result[0])
 		fnames.append(result)
 	cursor.close()
-	#context = dict(fdata = fnames)
-	return render_template("index.html", fdata = fnames, q_str = query_str)
-	#return render_template("index.html", q_str = query_str)
+	return render_template("index.html", fdata = fnames)
+
 	
 	
-		
+"""below code takes an island name and return the tourism, restaurant, etc. So, when show the result, could also get these"""	
 """tourism.html"""
 @app.route('/tourism/<island>')
 def tourism(island):
@@ -265,11 +155,11 @@ def airport(island):
 
 	return render_template('airport.html', airport_info= airport_info, island = island)
 
-"""budget"""
+"""below codes are about the budget function"""
 @app.route('/hotel-add-to-budget', methods=['POST'])
 def hotel_add_to_budget():
 	event_type = request.form['hotel_name']
-	event_type =  event_type[:3]
+	event_type =  event_type[:1]
 	event_price = request.form['price_level']
 	event_price = float(event_price)*50
 	params = {}
@@ -277,12 +167,12 @@ def hotel_add_to_budget():
 	params["event_price"] = event_price
 	with engine.begin() as connection:
 		connection.execute(text("INSERT INTO budget VALUES (:event_type, :event_price)"), params)
-	return '<html><body><h1>Added!</h1></body></html>'
+	return redirect(request.referrer)
 
 @app.route('/resta-add-to-budget', methods=['POST'])
 def resta_add_to_budget():
 	event_type = request.form['resta_name']
-	event_type =  event_type[:3]
+	event_type =  event_type[:1]
 	event_price = request.form['price_level']
 	event_price = float(event_price)*10
 	params = {}
@@ -290,12 +180,12 @@ def resta_add_to_budget():
 	params["event_price"] = event_price
 	with engine.begin() as connection:
 		connection.execute(text("INSERT INTO budget VALUES (:event_type, :event_price)"), params)
-	return '<html><body><h1>Added!</h1></body></html>'
+	return redirect(request.referrer)
 	
 @app.route('/tourism-add-to-budget', methods=['POST'])
 def tourism_add_to_budget():
 	event_type = request.form['tourism_name']
-	event_type =  event_type[:3]
+	event_type =  event_type[:1]
 	event_price = request.form['price_level']
 	event_price = event_price
 	params = {}
@@ -303,8 +193,33 @@ def tourism_add_to_budget():
 	params["event_price"] = event_price
 	with engine.begin() as connection:
 		connection.execute(text("INSERT INTO budget VALUES (:event_type, :event_price)"), params)
-	return '<html><body><h1>Added!</h1></body></html>'
-	
+	return redirect(request.referrer)
+"""
+@app.route('/budget')
+def budget():
+	cursor = g.conn.execute("SELECT SUM(price) FROM budget")
+	sum_budget = cursor.fetchone()[0]
+	cursor.close()
+	return render_template("budget.html", sum_budget =sum_budget)
+"""
+@app.route('/delete_budget', methods=['POST'])
+def delete_budget():
+    g.conn.execute("DELETE FROM budget")
+    return redirect('/budget')
+
+@app.route('/budget')
+def budget():
+    cursor = g.conn.execute("SELECT event_type, SUM(price) FROM budget GROUP BY event_type")
+    rows = cursor.fetchall()
+    cursor.close()
+    event_types = []
+    prices = []
+    for row in rows:
+        event_types.append(row[0])
+        prices.append(row[1])
+    sum_budget = sum(prices)
+    return render_template("budget.html", sum_budget=sum_budget, event_types=event_types, prices=prices)
+
 	
 
 # Example of adding new data to the database

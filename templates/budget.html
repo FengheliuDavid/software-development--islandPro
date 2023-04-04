@@ -5,7 +5,27 @@
   body {
     font-size: 15pt;
     font-family: arial;
+    background-color: #F0F8FF;
+    text-align: center;
   }
+
+h1 {
+  text-align: left;
+}
+
+  .forpie {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  canvas{
+      margin: 0 auto;
+      }
+
+.budgetbreak {
+  margin-top: 55px;
+}
 
 </style>
 
@@ -15,9 +35,100 @@
 </head>
 
 <body>
+
   <h1>Here is your budget: </h1>
+
+  <!-- clear budget -->
+  <form method="post" action="{{ url_for('delete_budget') }}">
+    <input type="submit" value="Clear Budget">
+  </form>
+  
+  {% if sum_budget %}
+  <h3> Your total budget is:</h3>
+  <p>${{ sum_budget }}💰</p>
+  <h3 class="budgetbreak forpie">budget breakdown</h3>
+  <p class="note forpie">A for tourism site, H for hotel, R for restaurant</p>
+  <canvas id="myPieChart" width="450" height="450"></canvas>
+  {% else %}
+  <p>Sorry, you need to add events to your budget first.</p>
+  {% endif %}
+
 
 
 </body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Retrieve data from Flask
+  var event_types = {{ event_types|tojson }};
+  var prices = {{ prices|tojson }};
+
+  // Create a pie chart
+  var ctx = document.getElementById('myPieChart').getContext('2d');
+  var myPieChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: event_types,
+      datasets: [{
+        label: 'Budget Breakdown',
+        data: prices,
+        backgroundColor: [
+          '#ff6384',
+          '#36a2eb',
+          '#cc65fe',
+          '#ffce56',
+          '#4bc0c0',
+          '#9966ff'
+        ]
+      }]
+    },
+    options: {
+      responsive: false
+    }
+  });
+</script>
+
+
+
+
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Retrieve data from Flask
+  var event_types = {
+    {
+      event_types | tojson
+    }
+  };
+  var prices = {
+    {
+      prices | tojson
+    }
+  };
+
+  // Create a pie chart
+  var ctx = document.getElementById('myPieChart').getContext('2d');
+  var myPieChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: event_types,
+      datasets: [{
+        label: 'Budget Breakdown',
+        data: prices,
+        backgroundColor: [
+          '#ff6384',
+          '#36a2eb',
+          '#cc65fe',
+          '#ffce56',
+          '#4bc0c0'
+        ]
+      }]
+    },
+    options: {
+      responsive: true
+    }
+  });
+</script> -->
+
+
 
 </html>
